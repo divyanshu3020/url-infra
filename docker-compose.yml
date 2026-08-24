@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  gateway:
+    image: nginx:alpine
+    container_name: gateway
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - generation-service
+      - redirection-service
+    networks:
+      - shortener-net
+
+  generation-service:
+    # CHANGE THIS: Replace <your-github-username> with your lowercase GitHub username
+    image: ghcr.io/divyanshu3020/url-generation-service:sha-53966b0
+    container_name: generation_service
+    restart: always
+    env_file:
+      - .env.generation
+    depends_on:
+      - redis
+      - scylladb
+    networks:
+      - shortener-net
+
+  redirection-service:
+    # CHANGE THIS: Replace <your-github-username> with your lowercase GitHub username
+    image: ghcr.io/divyanshu3020/url-resolver-service:sha-351e7b4
+    container_name: redirection_service
+    restart: always
+    env_file:
+      - .env.redirection
+    depends_on:
+      - redis
+      - scylladb
+    networks:
+      - shortener-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis_cache
+    restart: always
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - shortener-net
+
+  scylladb:
+    image: scylladb/scylla:latest
+    container_name: scylla_db
+    restart: always
+    command: --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    networks:
+      - shortener-net
+
+networks:
+  shortener-net:
+    driver: bridge
