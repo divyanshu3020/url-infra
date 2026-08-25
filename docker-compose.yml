@@ -53,7 +53,7 @@ services:
     image: scylladb/scylla:latest
     container_name: scylla_db
     restart: always
-    command: --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    command: --smp 1 --memory 750M --overprovisioned 1
     volumes:
       - scylla_data:/var/lib/scylla
     networks:
