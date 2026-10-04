@@ -16,7 +16,7 @@ services:
       - shortener-net
 
   generation-service:
-    image: ghcr.io/divyanshu3020/url-generation-service:sha-c55b358
+    image: ghcr.io/divyanshu3020/url-generation-service:ha-ece2b2d
     container_name: generation_service
     restart: always
     env_file:
@@ -28,7 +28,7 @@ services:
       - shortener-net
 
   redirection-service:
-    image: ghcr.io/divyanshu3020/url-resolver-service:sha-dcef6ed
+    image: ghcr.io/divyanshu3020/url-resolver-service:sha-0081586
     container_name: redirection_service
     restart: always
     env_file:
